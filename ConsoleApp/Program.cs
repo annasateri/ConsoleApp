@@ -1,2 +1,11 @@
-﻿// See https://aka.ms/new-console-template for more information
-Console.WriteLine("Hello, World!");
+﻿using ConsoleApp.Services;
+
+var menu = new MenuService();
+menu.FilePath = @$"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\content.json";
+
+
+while(true)
+{
+    Console.Clear();
+    menu.WelcomeMenu();
+}
