@@ -1,5 +1,4 @@
-﻿using ConsoleApp.Interfaces;
-using ConsoleApp.Models;
+﻿using ConsoleApp.Models;
 using Newtonsoft.Json;
 
 namespace ConsoleApp.Services;
@@ -7,8 +6,6 @@ internal class MenuService
 {
     private List<Contact> contacts = new List<Contact>();
     public string FilePath { get; set; } = null!;
-    //private List<IBaseEmployee> employees = new List<IBaseEmployee>();
-    //private FileService file = new FileService();
 
     public void WelcomeMenu()
     {
@@ -17,7 +14,6 @@ internal class MenuService
         {
             var json = JsonConvert.DeserializeObject<Dictionary<string, List<Contact>>>(FileService.Read(FilePath))!;
             contacts = json["contacts"];
-            //contacts = JsonConvert.DeserializeObject<List<IContact>>(file.Read(FilePath))!;
         }
         catch
         {
