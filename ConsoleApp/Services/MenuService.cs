@@ -1,29 +1,28 @@
 ﻿using ConsoleApp.Interfaces;
 using ConsoleApp.Models;
 using Newtonsoft.Json;
-using System.ComponentModel.DataAnnotations;
-using System.Text.Json.Serialization;
 
 namespace ConsoleApp.Services;
 internal class MenuService
 {
-    private List<IContact> contacts = new List<IContact>();
-    //private List<IBaseEmployee> employees = new List<IBaseEmployee>();
-    private FileService file = new FileService();
-
+    private List<Contact> contacts = new List<Contact>();
     public string FilePath { get; set; } = null!;
+    //private List<IBaseEmployee> employees = new List<IBaseEmployee>();
+    //private FileService file = new FileService();
 
     public void WelcomeMenu()
     {
 
-        //try
-        //{
-        //    contacts = JsonConvert.DeserializedObject<List<IContact>>(file.Read(FilePath))!;
-        //}
-        //catch
-        //{
+        try
+        {
+            var json = JsonConvert.DeserializeObject<Dictionary<string, List<Contact>>>(FileService.Read(FilePath))!;
+            contacts = json["contacts"];
+            //contacts = JsonConvert.DeserializeObject<List<IContact>>(file.Read(FilePath))!;
+        }
+        catch
+        {
 
-        //}
+        }
 
         Console.Clear();
         Console.WriteLine("Address book");
@@ -62,7 +61,7 @@ internal class MenuService
         contact.Address = Console.ReadLine() ?? "";
 
         contacts.Add(contact);
-        file.Save(FilePath, JsonConvert.SerializeObject(new { contact }));
+        FileService.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
 
         Console.WriteLine("");
         Console.WriteLine("Press any key to return to the home page.");
@@ -72,33 +71,76 @@ internal class MenuService
     {
         Console.Clear();
         Console.WriteLine("Delete contact");
+        Console.Write("Enter the name of the contact you want to delete: ");
 
-        Contact contact = new Contact();
+        var name = Console.ReadLine();
+        //var answer = Console.ReadLine();
+        var response = contacts.Find(contact => contact.FirstName == name);
 
+        while (response == null)
+        {
+            Console.Clear();
+            Console.Write("There is no contact with that name in you address book. \nPlease try again: ");
+            name = Console.ReadLine();
+            response = contacts.Find(x => x.FirstName == name);
+        }
         Console.Clear();
-        Console.WriteLine("Show all contacts");
-        Console.WriteLine();
+        Console.WriteLine("Are you sure you want to delete " + response.FirstName + " from your address book?");
+        Console.Write("Enter y for yes if you're sure and n for no: ");
+        var answer = Console.ReadLine();
+        while (answer != "y" && answer != "n")
+        {
+            Console.Clear();
+            Console.WriteLine("You can only enter y or n. Please try again.");
+            Console.Write("Enter y for yes if you're sure and n for no: ");
+            answer = Console.ReadLine();
+        }
+        if (answer == "y")
+        {
+            Console.Clear();
+            contacts.RemoveAll(contact => contact.FirstName! == response.FirstName);
+            FileService.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
+            Console.WriteLine(response.FirstName + " has been deleted.");
+            Console.WriteLine("Press any key to return to the home page.");
+            Console.ReadKey();
+        }
+        else if (answer == "n")
+        {
+            WelcomeMenu();
+        }
 
-        contacts!.ForEach(contact => Console.WriteLine("Name: " + contact.FirstName + "" + contact.LastName + "" + "Email: " + contact.Email));
-
-        contacts.Remove(contact);
-        file.Save(FilePath, JsonConvert.SerializeObject(new { contact }));
-
-        Console.WriteLine("");
-        Console.WriteLine("Press any key to return to the home page.");
-        Console.ReadKey();
     }
     private void OptionThree()
     {
         Console.Clear();
-        Console.WriteLine("Show contact");
+        Console.WriteLine("Show a contact");
         Console.WriteLine();
+        Console.Write("Enter the name of the contact you're looking for: ");
 
-        contacts!.ForEach(contact => Console.WriteLine("Name: " + contact.FirstName + "" + contact.LastName + "" + "Email: " + contact.Email));
+        var name = Console.ReadLine();
+        if (name != null)
+        {
+            var response = contacts.Find(contact => contact.FirstName == name);
 
-        Console.WriteLine("");
-        Console.WriteLine("Press any key to return to the home page.");
-        Console.ReadKey();
+            while (response == null)
+            {
+                Console.Clear();
+                Console.Write("There is no contact with that name in you address book. \nPlease try again: ");
+                name = Console.ReadLine();
+                response = contacts.Find(x => x.FirstName == name);
+            }
+            Console.Clear();
+            Console.WriteLine("First name: " + response.FirstName! +
+                  "\nLast name: " + response.LastName +
+                  "\nEmail: " + response.Email +
+                  "\nPhone number: " + response.PhoneNumber +
+                  "\nAddress: " + response.Address
+                );
+            Console.WriteLine("");
+            Console.WriteLine("Press any key to return to the home page.");
+            Console.ReadKey();
+
+        }
     }
     private void OptionFour()
     {
@@ -106,7 +148,7 @@ internal class MenuService
         Console.WriteLine("Show all contacts");
         Console.WriteLine();
 
-        contacts!.ForEach(contact => Console.WriteLine("Name: " + contact.FirstName + "" + contact.LastName + "" + "Email: " + contact.Email));
+        contacts!.ForEach(contact => Console.WriteLine("Name: " + contact.FirstName + " " + contact.LastName + "  " + "Email: " + contact.Email + "\n"));
 
         Console.WriteLine("");
         Console.WriteLine("Press any key to return to the home page.");
