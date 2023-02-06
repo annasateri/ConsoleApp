@@ -2,9 +2,10 @@
 using Newtonsoft.Json;
 
 namespace ConsoleApp.Services;
-internal class MenuService
+public class MenuService
 {
-    private List<Contact> contacts = new List<Contact>();
+    public List<Contact> contacts = new List<Contact>();
+    public FileService file = new FileService();
     public string FilePath { get; set; } = null!;
 
     public void WelcomeMenu()
@@ -12,7 +13,7 @@ internal class MenuService
 
         try
         {
-            var json = JsonConvert.DeserializeObject<Dictionary<string, List<Contact>>>(FileService.Read(FilePath))!;
+            var json = JsonConvert.DeserializeObject<Dictionary<string, List<Contact>>>(file.Read(FilePath))!;
             contacts = json["contacts"];
         }
         catch
@@ -57,7 +58,7 @@ internal class MenuService
         contact.Address = Console.ReadLine() ?? "";
 
         contacts.Add(contact);
-        FileService.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
+        file.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
 
         Console.WriteLine("");
         Console.WriteLine("Press any key to return to the home page.");
@@ -95,7 +96,7 @@ internal class MenuService
         {
             Console.Clear();
             contacts.RemoveAll(contact => contact.FirstName! == response.FirstName);
-            FileService.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
+            file.Save(FilePath, JsonConvert.SerializeObject(new { contacts }));
             Console.WriteLine(response.FirstName + " has been deleted.");
             Console.WriteLine("Press any key to return to the home page.");
             Console.ReadKey();

@@ -12,13 +12,16 @@ namespace ConsoleApp_test_xUnit
     public class FileManager_Tests
     {
         FileService fileService;
+        MenuService menuService;
+
         string content;
 
         public FileManager_Tests()
         {
             // arrange
             fileService = new FileService();
-            fileService.FilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\content.json";
+            menuService = new MenuService();
+            menuService.FilePath = $@"{Environment.GetFolderPath(Environment.SpecialFolder.Desktop)}\content.json";
             content = JsonConvert.SerializeObject(new { FirstName = "Anna", LastName = "Sateri" });
         }
 
@@ -26,11 +29,11 @@ namespace ConsoleApp_test_xUnit
         public void Should_Create_a_File_With_Json_Content()
         {
             // act
-            fileService.Save(content);
-            string result = fileService.Read();
+            fileService.Save(menuService.FilePath, content);
+            string result = fileService.Read(menuService.FilePath);
 
             // assert
-            Assert.True(File.Exists(fileService.FilePath));
+            Assert.True(File.Exists(menuService.FilePath));
             Assert.Equal(result.Trim(), content);
         }
     }

@@ -1,7 +1,7 @@
 ﻿using ConsoleApp.Interfaces;
 
 namespace ConsoleApp.Models;
-internal class Contact : IContact
+public class Contact : IContact
 {
     public Contact()
     {

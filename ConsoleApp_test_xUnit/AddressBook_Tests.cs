@@ -1,4 +1,6 @@
-﻿using System;
+﻿using ConsoleApp.Models;
+using ConsoleApp.Services;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -25,7 +27,7 @@ namespace ConsoleApp_test_xUnit
             menuService.contacts.Add(contact);
 
             // assert
-            Assert.Equal(2, menuService.ContactList.Count);
+            Assert.Equal(2, menuService.contacts.Count);
 
         }
 

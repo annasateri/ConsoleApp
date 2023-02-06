@@ -1,13 +1,13 @@
 ﻿namespace ConsoleApp.Services;
-public static class FileService
+public class FileService
 {
-    public static void Save(string filePath, string content)
+    public void Save(string filePath, string content)
     {
         using var sw = new StreamWriter(filePath);
         sw.WriteLine(content);
     }
 
-    public static string Read(string filePath)
+    public string Read(string filePath)
     {
         try
         {

@@ -1,6 +1,6 @@
 ﻿namespace ConsoleApp.Interfaces
 {
-    internal interface IContact
+    public interface IContact
     {
         Guid Id { get; set; }
         string FirstName { get; set; }
